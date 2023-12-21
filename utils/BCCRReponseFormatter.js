@@ -7,7 +7,7 @@ module.exports = {
         return({
             code: getValueByTagName(response, 'COD_INDICADORINTERNO'),
             date: getValueByTagName(response, 'DES_FECHA'),
-            value: getValueByTagName(response, 'NUM_VALOR'),
+            value: parseFloat(getValueByTagName(response, 'NUM_VALOR')),
         })
     }
 }
