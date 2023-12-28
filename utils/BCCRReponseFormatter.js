@@ -3,11 +3,10 @@ const  getValueByTagName = (element, tagName) => {
 }
 
 module.exports = {
-    formatIndicatorResponse : (response) => {
+    formatIndicatorResponse : (res) => {
         return({
-            code: getValueByTagName(response, 'COD_INDICADORINTERNO'),
-            date: getValueByTagName(response, 'DES_FECHA'),
-            value: parseFloat(getValueByTagName(response, 'NUM_VALOR')),
+            date: getValueByTagName(res, 'DES_FECHA'),
+            value: parseFloat(getValueByTagName(res, 'NUM_VALOR')),
         })
     }
 }

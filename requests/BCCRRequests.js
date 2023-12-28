@@ -1,5 +1,3 @@
-
-
 const HOST = 'https://gee.bccr.fi.cr';
 
 module.exports = {

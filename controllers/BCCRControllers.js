@@ -1,12 +1,12 @@
 const { DOMParser } = require('xmldom')
 const {requestIndicator} = require("../requests/BCCRRequests");
 const {formatIndicatorResponse} = require("../utils/BCCRReponseFormatter");
-const {formatCurrentValueIndicatorRequestPayload} = require("../utils/BCCRRequestFormatter");
+const {formatRequestPayload} = require("../utils/BCCRRequestFormatter");
 
 module.exports = {
-    getIndicatorCurrentValue: (code) => {
+    getIndicatorValue: (code) => {
         return (req, res) => {
-            const payload = formatCurrentValueIndicatorRequestPayload(code)
+            const payload = formatRequestPayload(req, code)
             requestIndicator(payload)
                 .then(res => res.text())
                 .then(str => {
@@ -18,9 +18,9 @@ module.exports = {
                 })
         };
     },
-    getIndicatorCurrentAndLastValue: (code) => {
+    getIndicatorValueWithReference: (code) => {
         return (req, res) => {
-            const payload = formatCurrentValueIndicatorRequestPayload(code)
+            const payload = formatRequestPayloadForCurrentDate(code)
             requestIndicator(payload)
                 .then(res => res.text())
                 .then(str => {
