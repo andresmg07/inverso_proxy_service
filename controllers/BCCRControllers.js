@@ -8,28 +8,11 @@ module.exports = {
         return (req, res) => {
             const payload = formatRequestPayload(req, code)
             requestIndicator(payload)
-                .then(res => res.text())
-                .then(str => {
-                    const xmlFormatted = new DOMParser().parseFromString(str)
-                    res.status(200).json(formatIndicatorResponse(xmlFormatted));
-                })
-                .catch((error) => {
-                    res.status(500).json({error});
-                })
+                .then(indicatorRes => formatIndicatorResponse(indicatorRes))
+                .then(formattedIndicatorRes => res.status(200).json(formattedIndicatorRes))
+                .catch(e => res.status(500).json({message: e.message}))
         };
     },
     getIndicatorValueWithReference: (code) => {
-        return (req, res) => {
-            const payload = formatRequestPayloadForCurrentDate(code)
-            requestIndicator(payload)
-                .then(res => res.text())
-                .then(str => {
-                    const xmlFormatted = new DOMParser().parseFromString(str)
-                    res.status(200).json(formatIndicatorResponse(xmlFormatted));
-                })
-                .catch((error) => {
-                    res.status(500).json({error});
-                })
-        };
     },
 }
