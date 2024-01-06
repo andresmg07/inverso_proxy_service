@@ -1,7 +1,5 @@
 const {DOMParser} = require("xmldom");
-const  getValueByTagName = (element, tagName) => {
-    return element.documentElement.getElementsByTagName(tagName)[0].firstChild.nodeValue
-}
+const {getValueByTagName} = require("./BCCRRequestUtil");
 
 module.exports = {
     formatIndicatorResponse : (res) => {

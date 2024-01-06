@@ -1,17 +1,31 @@
 const {requestIndicator} = require("../requests/BCCRRequests");
 const {DOMParser} = require("xmldom");
-const {formatIndicatorResponse} = require("./BCCRReponseFormatter");
+
+const getValueByTagName = (element, tagName) => {
+    return element.documentElement.getElementsByTagName(tagName)[0].firstChild.nodeValue
+}
+
+const isValidResponse = (response) => {
+    return new DOMParser().parseFromString(response).documentElement.getElementsByTagName('NUM_VALOR').length !== 0
+}
+
+
+const getLatestDateAvailableForRequest = ({reqCode, targetDate}) => {
+    return new Promise(resolve => {
+        requestIndicator({code: reqCode, startDate: targetDate, endDate: targetDate})
+            .then(res => res.text())
+            .then(txt => {
+                if(isValidResponse(txt)){
+                    resolve(targetDate)
+                }else{
+                    targetDate.setDate(targetDate.getDate() - 1)
+                    resolve(getLatestDateAvailableForRequest({reqCode, targetDate}))
+                }
+            })
+    })
+}
 
 module.exports = {
-    isIndicatorValuePresent: (payload) => {
-        return new Promise(resolve => {
-            requestIndicator(payload)
-                .then(res => res.text())
-                .then(txt => {
-                    resolve(new DOMParser().parseFromString(txt).documentElement.getElementsByTagName('NUM_VALOR').length !== 0)
-                })
-        })
-
-
-    },
+    getLatestDateAvailableForRequest,
+    getValueByTagName,
 }

@@ -1,41 +1,15 @@
-const {isIndicatorValuePresent} = require("./BCCRRequestUtil");
-const formatRequestPayloadForLatestDate  = (reqCode) => {
-    const latestDate = new Date()
-    latestDate.setDate(latestDate.getDate() + 1)
-    let payload = {
+const {getLatestDateAvailableForRequest} = require("./BCCRRequestUtil");
+const formatRequestPayloadForLatestDate  = async (reqCode) => {
+    const latestDate = await getLatestDateAvailableForRequest({reqCode, targetDate: new Date()})
+    return ({
         code: reqCode,
-        startDate: latestDate.toLocaleDateString('es-ES'),
-        endDate: latestDate.toLocaleDateString('es-ES')
-    }
-    let hasBeenFound = async () => {
-        return await isIndicatorValuePresent(payload);
-    }
-    console.log(hasBeenFound)
-    latestDate.setDate(latestDate.getDate() - 1)
-    payload = {
-        code: reqCode,
-        startDate: latestDate.toLocaleDateString('es-ES'),
-        endDate: latestDate.toLocaleDateString('es-ES')
-    }
-    hasBeenFound = async () => {
-        return await isIndicatorValuePresent(payload);
-    }
-    console.log(hasBeenFound)
-    // while(!hasBeenFound){
-    //     latestDate.setDate(latestDate.getDate() - 1)
-    //     payload = {
-    //         code: reqCode,
-    //         startDate: latestDate.toLocaleDateString('es-ES'),
-    //         endDate: latestDate.toLocaleDateString('es-ES')
-    //     }
-    //     isIndicatorValuePresent(payload).then(res => {hasBeenFound = res})
-    // }
-    console.log(payload)
-    return payload
+        startDate: latestDate,
+        endDate: latestDate,
+    })
 }
 
 const formatRequestPayloadForSingleDate = (reqCode, reqTargetDate) => {
-    const targetDate = new Date(reqTargetDate).toLocaleDateString('es-ES')
+    const targetDate = new Date(reqTargetDate)
     return ({
         code: reqCode,
         startDate: targetDate,
@@ -44,8 +18,8 @@ const formatRequestPayloadForSingleDate = (reqCode, reqTargetDate) => {
 }
 
 const formatRequestPayloadForDateRange = (reqCode, reqStartDate, reqEndDate) => {
-    const startDate = new Date(reqStartDate).toLocaleDateString('es-ES')
-    const endDate = new Date(reqEndDate).toLocaleDateString('es-ES')
+    const startDate = new Date(reqStartDate)
+    const endDate = new Date(reqEndDate)
     return ({
         code: reqCode,
         startDate,

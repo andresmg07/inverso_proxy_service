@@ -5,8 +5,8 @@ const {formatRequestPayload} = require("../utils/BCCRRequestFormatter");
 
 module.exports = {
     getIndicatorValue: (code) => {
-        return (req, res) => {
-            const payload = formatRequestPayload(req, code)
+        return async (req, res) => {
+            const payload = await formatRequestPayload(req, code)
             requestIndicator(payload)
                 .then(indicatorRes => formatIndicatorResponse(indicatorRes))
                 .then(formattedIndicatorRes => res.status(200).json(formattedIndicatorRes))
