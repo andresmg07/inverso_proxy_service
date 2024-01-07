@@ -1,7 +1,13 @@
-const {getLatestDateAvailableForRequest} = require("./BCCRRequestUtil");
+const {getLatestAvailableDateForRequest} = require("./BCCRRequestUtil");
 
+/**
+ * Utilitarian function that formats request payload to retrieve the current value from an indicator.
+ * @param reqCode {string} BCCR unique indicator code.
+ * @returns {Promise<{code, endDate: Date, startDate: Date}>}
+ */
 const formatRequestPayloadForLatestDate  = async (reqCode) => {
-    const latestDate = await getLatestDateAvailableForRequest({reqCode, targetDate: new Date()})
+    // Use of utilitarian function to found the latest available date for request a specific indicator. This call uses as initial target today's date.
+    const latestDate = await getLatestAvailableDateForRequest(reqCode, new Date())
     return ({
         code: reqCode,
         startDate: latestDate,
@@ -9,6 +15,12 @@ const formatRequestPayloadForLatestDate  = async (reqCode) => {
     })
 }
 
+/**
+ * Utilitarian function that formats request payload to retrieve a value from an indicator on a specific date.
+ * @param reqCode {string} BCCR unique indicator code.
+ * @param reqTargetDate {string} Target date to be fetched.
+ * @returns {{code, endDate: Date, startDate: Date}}
+ */
 const formatRequestPayloadForSingleDate = (reqCode, reqTargetDate) => {
     const targetDate = new Date(reqTargetDate)
     return ({
@@ -18,6 +30,13 @@ const formatRequestPayloadForSingleDate = (reqCode, reqTargetDate) => {
     })
 }
 
+/**
+ * Utilitarian function that formats request payload to retrieve values from an indicator on a time range.
+ * @param reqCode {string} BCCR unique indicator code.
+ * @param reqStartDate {string} Start date for request range.
+ * @param reqEndDate {string} End date for request range.
+ * @returns {{code, endDate: Date, startDate: Date}}
+ */
 const formatRequestPayloadForDateRange = (reqCode, reqStartDate, reqEndDate) => {
     const startDate = new Date(reqStartDate)
     const endDate = new Date(reqEndDate)
@@ -29,7 +48,13 @@ const formatRequestPayloadForDateRange = (reqCode, reqStartDate, reqEndDate) => 
 }
 
 module.exports = {
-    formatRequestPayload : (req, reqCode) => {
+    /**
+     * Utilitarian function that acts as flow control structure depending on time range parameter.
+     * @param req {Request} Object holding resource request metadata.
+     * @param reqCode {string} BCCR unique indicator code.
+     * @returns {{code, endDate: Date, startDate: Date}|Promise<{code, endDate: Date, startDate: Date}>}
+     */
+    formatTimeRangedRequestPayload : (req, reqCode) => {
         switch (req.params.timeRange) {
             case 'current':
                 return formatRequestPayloadForLatestDate(reqCode)
@@ -43,11 +68,23 @@ module.exports = {
         }
     },
 
+    /**
+     * Utilitarian function that formats request payload to retrieve a value from an indicator on a specific date and a corresponding reference.
+     * @param req {Request} Object holding resource request metadata.
+     * @param reqCode {string} BCCR unique indicator code.
+     * @returns {{offsetDatePayload: {code, endDate: Date, startDate: Date}, targetDatePayload: {code, endDate: Date, startDate: Date}}}
+     */
     formatReferencedRequestPayload : (req, reqCode) => {
+        // Number of offset days from target date.
         const offset = req.query.offset
+
+        // Initialization of objects on target date.
         const targetDate = new Date(req.query.date)
         const offsetDate = new Date(req.query.date)
+
+        // Offset applied on corresponding date object.
         offsetDate.setDate(offsetDate.getDate() - offset)
+
         return ({
             targetDatePayload: { code: reqCode, startDate: targetDate, endDate: targetDate },
             offsetDatePayload: { code: reqCode, startDate: offsetDate, endDate: offsetDate }
