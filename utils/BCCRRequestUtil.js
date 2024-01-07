@@ -1,12 +1,16 @@
 const {requestIndicator} = require("../requests/BCCRRequests");
 const {DOMParser} = require("xmldom");
 
-const getValueByTagName = (element, tagName) => {
-    return element.documentElement.getElementsByTagName(tagName)[0].firstChild.nodeValue
+const getSingleValueByTagName = (response, tagName) => {
+    return new DOMParser().parseFromString(response).documentElement.getElementsByTagName(tagName)[0].firstChild.nodeValue
 }
 
-const isValidResponse = (response) => {
-    return new DOMParser().parseFromString(response).documentElement.getElementsByTagName('NUM_VALOR').length !== 0
+const getValuesByTagName = (response, tagName) => {
+    return new DOMParser().parseFromString(response).documentElement.getElementsByTagName(tagName)
+}
+
+const responseLength = (response) => {
+    return new DOMParser().parseFromString(response).documentElement.getElementsByTagName('NUM_VALOR').length
 }
 
 
@@ -15,7 +19,7 @@ const getLatestDateAvailableForRequest = ({reqCode, targetDate}) => {
         requestIndicator({code: reqCode, startDate: targetDate, endDate: targetDate})
             .then(res => res.text())
             .then(txt => {
-                if(isValidResponse(txt)){
+                if(responseLength(txt) !== 0){
                     resolve(targetDate)
                 }else{
                     targetDate.setDate(targetDate.getDate() - 1)
@@ -27,5 +31,7 @@ const getLatestDateAvailableForRequest = ({reqCode, targetDate}) => {
 
 module.exports = {
     getLatestDateAvailableForRequest,
-    getValueByTagName,
+    getSingleValueByTagName,
+    getValuesByTagName,
+    responseLength,
 }

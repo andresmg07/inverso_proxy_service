@@ -1,4 +1,5 @@
 const {getLatestDateAvailableForRequest} = require("./BCCRRequestUtil");
+
 const formatRequestPayloadForLatestDate  = async (reqCode) => {
     const latestDate = await getLatestDateAvailableForRequest({reqCode, targetDate: new Date()})
     return ({
@@ -27,7 +28,6 @@ const formatRequestPayloadForDateRange = (reqCode, reqStartDate, reqEndDate) => 
     })
 }
 
-
 module.exports = {
     formatRequestPayload : (req, reqCode) => {
         switch (req.params.timeRange) {
@@ -42,4 +42,15 @@ module.exports = {
                 return formatRequestPayloadForDateRange(reqCode, startDate, endDate)
         }
     },
+
+    formatReferencedRequestPayload : (req, reqCode) => {
+        const offset = req.query.offset
+        const targetDate = new Date(req.query.date)
+        const offsetDate = new Date(req.query.date)
+        offsetDate.setDate(offsetDate.getDate() - offset)
+        return ({
+            targetDatePayload: { code: reqCode, startDate: targetDate, endDate: targetDate },
+            offsetDatePayload: { code: reqCode, startDate: offsetDate, endDate: offsetDate }
+        })
+    }
 }
