@@ -1,6 +1,6 @@
 const {requestBCCRWebService} = require("../requests/BCCRRequests");
-const {formatIndicatorResponse, formatIndicatorResponseWithReference} = require("../utils/BCCRReponseFormatter");
-const {formatTimeRangedRequestPayload, formatReferencedRequestPayload} = require("../utils/BCCRRequestFormatter");
+const {formatIndicatorResponse, formatIndicatorResponseWithReference} = require("../utils/IndicatorUtils/indicatorReponseFormatter");
+const {formatTimeRangedIndicatorRequestPayload, formatReferencedIndicatorRequestPayload} = require("../utils/IndicatorUtils/indicatorRequestFormatter");
 
 module.exports = {
     /**
@@ -11,7 +11,7 @@ module.exports = {
     getIndicatorValue: (code) => {
         return async (req, res) => {
             // Request payload formatted according to data inside req parameter.
-            const payload = await formatTimeRangedRequestPayload(req, code)
+            const payload = await formatTimeRangedIndicatorRequestPayload(req, code)
             // BCCR web service request.
             requestBCCRWebService(payload)
                 .then(indicatorRes => formatIndicatorResponse(indicatorRes))
@@ -28,7 +28,7 @@ module.exports = {
     getIndicatorValueWithReference: (code) => {
         return (req, res) => {
             // Multiple request payloads formatted according to data inside req parameter.
-            const payloads = formatReferencedRequestPayload(req, code)
+            const payloads = formatReferencedIndicatorRequestPayload(req, code)
             // BCCR web service request for indicator value on target date.
             requestBCCRWebService(payloads.targetDatePayload)
                 .then(indicatorRes => formatIndicatorResponse(indicatorRes))

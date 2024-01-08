@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const BCCRIndicatorsController = require('../controllers/BCCRIndicatorsController')
+const BCCRIndicatorsController = require('../controllers/indicatorsController')
 
 // BCCR web service constant indicator codes.
 const DOLLAR_COLON_PURCHASE = '317'

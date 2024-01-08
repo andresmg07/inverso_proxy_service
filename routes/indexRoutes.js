@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const BCCRIndicesController = require('../controllers/BCCRIndicesController')
+const BCCRIndicesController = require('../controllers/indicesController')
 
 // BCCR web service constant indicator codes.
 const IDX0M12M = {worth: '90343', interanualYield: '90344', maturityAverage: '90345', numberOfEmissions: '90346'}

@@ -1,4 +1,4 @@
-const {getSingleValueByTagName, getValuesByTagName, responseLength} = require("./BCCRRequestUtil");
+const {getSingleValueByTagName, getValuesByTagName, responseLength} = require("../BCCRUtil");
 
 /**
  * Utilitarian function that formats a single indicator data point response.

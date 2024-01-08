@@ -1,4 +1,4 @@
-const {getLatestAvailableDateForRequest} = require("./BCCRRequestUtil");
+const {getLatestAvailableDateForRequest} = require("../BCCRUtil");
 
 /**
  * Utilitarian function that formats request payload to retrieve the current value from an indicator.
@@ -49,12 +49,12 @@ const formatRequestPayloadForDateRange = (reqCode, reqStartDate, reqEndDate) => 
 
 module.exports = {
     /**
-     * Utilitarian function that acts as flow control structure depending on time range parameter.
+     * Utilitarian function that acts as flow control structure depending on time range parameter for an indicator request.
      * @param req {Request} Object holding resource request metadata.
      * @param reqCode {string} BCCR unique indicator code.
      * @returns {{code, endDate: Date, startDate: Date}|Promise<{code, endDate: Date, startDate: Date}>}
      */
-    formatTimeRangedRequestPayload : (req, reqCode) => {
+    formatTimeRangedIndicatorRequestPayload : (req, reqCode) => {
         switch (req.params.timeRange) {
             case 'current':
                 return formatRequestPayloadForLatestDate(reqCode)
@@ -74,9 +74,9 @@ module.exports = {
      * @param reqCode {string} BCCR unique indicator code.
      * @returns {{offsetDatePayload: {code, endDate: Date, startDate: Date}, targetDatePayload: {code, endDate: Date, startDate: Date}}}
      */
-    formatReferencedRequestPayload : (req, reqCode) => {
+    formatReferencedIndicatorRequestPayload : (req, reqCode) => {
         // Number of offset days from target date.
-        const offset = req.query.offset
+        const offset = parseInt(req.query.offset)
 
         // Initialization of objects on target date.
         const targetDate = new Date(req.query.date)

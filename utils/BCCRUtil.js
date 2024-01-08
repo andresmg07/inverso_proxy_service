@@ -27,8 +27,18 @@ const getValuesByTagName = (response, tagName) => {
  * @param response {string} XML structured text.
  * @returns {number}
  */
-const responseLength = (response) => {
+const getResponseLength = (response) => {
     return new DOMParser().parseFromString(response).documentElement.getElementsByTagName('NUM_VALOR').length
+}
+
+/**
+ * Utilitarian function that returns the last day of a given month and year.
+ * @param year {number} Target year to calculate last day of given month.
+ * @param month {number} Target moth to calculate last day.
+ * @returns {Date}
+ */
+const getLastDayOfMonth = (year, month) => {
+    return new Date(year, month + 1, 0);
 }
 
 /**
@@ -43,7 +53,7 @@ const getLatestAvailableDateForRequest = (reqCode, targetDate) => {
         requestBCCRWebService({code: reqCode, startDate: targetDate, endDate: targetDate})
             .then(res => res.text())
             .then(txt => {
-                if(responseLength(txt) !== 0){
+                if(getResponseLength(txt) !== 0){
                     resolve(targetDate)
                 }else{
                     // Parameter date decrement.
@@ -59,5 +69,6 @@ module.exports = {
     getLatestAvailableDateForRequest,
     getSingleValueByTagName,
     getValuesByTagName,
-    responseLength,
+    getResponseLength,
+    getLastDayOfMonth,
 }
