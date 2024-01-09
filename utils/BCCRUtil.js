@@ -42,6 +42,63 @@ const getLastDayOfMonth = (year, month) => {
 }
 
 /**
+ * Utilitarian function that extract a data point from a XML formatted response.
+ * @param dataPoint {string} XML structured text containing target data point.
+ * @returns {{date: string, value: number}}
+ */
+const getDataPoint = (dataPoint) => {
+    return ({
+        date: getSingleValueByTagName(dataPoint, 'DES_FECHA'),
+        value: parseFloat(getSingleValueByTagName(dataPoint, 'NUM_VALOR')),
+    })
+}
+
+/**
+ * Utilitarian function that extract a data set from a XML formatted response.
+ * @param dataSet {string} XML structured text containing target data set.
+ * @returns {Array<{date: string, value: number}>}
+ */
+const getDataSet = (dataSet) => {
+
+    // Definition of temporal result data structure.
+    let targetDataSet = []
+
+    // Retrieval target of values
+    const dates = getValuesByTagName(dataSet, 'DES_FECHA')
+    const values = getValuesByTagName(dataSet, 'NUM_VALOR')
+
+    // Collapse of retrieved target values into list of objects.
+    for(let i = 0; i < getResponseLength(dataSet); i++){
+        targetDataSet.push({
+            date: dates[i],
+            value: parseFloat(values[i]),
+        })
+    }
+
+    return targetDataSet
+}
+
+/**
+ * Utilitarian function for data extraction from BCCR web service response. This function handle single and multiple value responses.
+ * @param res {Response} BCCR web service response.
+ * @returns {Promise<{date: string, value: number} | Array<{date: string, value: number}>>}
+ */
+const getResponseData = (res) => {
+    return new Promise((resolve, reject) => {
+        res.text().then( txt => {
+            if(getResponseLength(txt) === 1){
+                resolve(getDataPoint(txt))
+            }else{
+                resolve(getDataSet(txt))
+            }
+        })
+            .catch(() => {
+                reject(new Error('Error while formatting response.'))
+            })
+    })
+}
+
+/**
  * Recursive utilitarian function that founds the latest available date for request a specific indicator.
  * @param reqCode {string} BCCR unique indicator code.
  * @param targetDate {Date} Changing date parameter through recursion. This parameter is decreased util valid date is found.
@@ -65,10 +122,14 @@ const getLatestAvailableDateForRequest = (reqCode, targetDate) => {
     })
 }
 
+
 module.exports = {
     getLatestAvailableDateForRequest,
     getSingleValueByTagName,
     getValuesByTagName,
     getResponseLength,
     getLastDayOfMonth,
+    getDataPoint,
+    getDataSet,
+    getResponseData,
 }

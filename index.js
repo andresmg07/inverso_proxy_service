@@ -10,9 +10,9 @@ app.use(cors());
 app.use(express.json());
 
 // Main routes.
+app.use('/index', indexRoutes)
 app.use('/indicator', indicatorRoutes)
 app.use('/curve', indicatorRoutes)
-app.use('/index', indexRoutes)
 
 app.listen(process.env.API_PORT, () => {
     console.log('Server up on port: ' + process.env.API_PORT)
